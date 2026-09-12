@@ -1,0 +1,468 @@
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="utf-8">
+  <title>丝绸之路·中国古代建筑大数据可视化</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <link rel="stylesheet" href="css/comon0.css">
+  <style>
+    /* ==================== 页面样式 ==================== */
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .main-content {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../丝绸之路/img/背景2.png') no-repeat center/cover;
+      background-attachment: fixed;
+      z-index: -1;
+      filter: brightness(0.8);
+    }
+
+    /* 优化跳转按钮样式 - 不遮挡、更美观、层级合理 */
+    .jump-btn {
+      position: absolute;
+      right: 15px;
+      top: 10px;
+      color: #FFD700;
+      font-size: 12px;
+      cursor: pointer;
+      z-index: 99;
+      background: rgba(139, 69, 19, 0.7);
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: all 0.2s;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    .jump-btn:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    /* 针对不同模块调整按钮位置，避免遮挡标题/内容 */
+    .jump-btn-dynasty {
+      top: 8px;
+      right: 15px;
+    }
+ .jump-btn-list {
+      top: 8px;
+      right: 15px;
+    }
+    .jump-btn-building {
+      bottom: 15px;
+      top: auto;
+      left: 15px;
+      width: 100px;
+    }
+
+    .jump-btn-province {
+      top: 2px;
+      right: 20px;
+    }
+.jump-btn-save {
+      top: 2px;
+      right: 10px;
+    }
+    .jump-btn-protect {
+      top: 2px;
+      right: 20px;
+    }
+
+    /* 确保标题区域有足够空间 */
+    .alltitle {
+      position: relative;
+      padding-right: 100px;
+      font-family: sans-serif;
+      color: #FFD700;
+    }
+
+    /* 标题样式 */
+    .head h1 {
+      font-size: 48px;
+      letter-spacing: 8px;
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #FFD700, #FFB800, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+    }
+
+    /* 时间显示样式 */
+    .time {
+      color: #FFD700;
+      text-shadow: 0 1px 5px rgba(255, 215, 0, 0.5);
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    /* 数据卡片样式 */
+    .sycm h2, .sycm2 h2 {
+      color: #FFD700;
+      text-shadow: 0 1px 5px rgba(255, 215, 0, 0.5);
+    }
+
+    .sycm span, .sycm2 span {
+      color: #fff;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 导航栏样式 */
+    .barnav {
+      background: rgba(139, 69, 19, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .counter {
+      color: #FFD700;
+      text-shadow: 0 1px 5px rgba(255, 215, 0, 0.5);
+    }
+
+    .barbox2 li {
+      color: #fff;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 地图样式 */
+    .mapbox {
+      background: rgba(139, 69, 19, 0.5);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    /* 监测列表样式 */
+    .wrap li p span {
+      color: #fff;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 游客留言样式 */
+    .comment {
+      color: #FFE4B5 !important;
+      display: block;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* 筛选按钮样式 */
+    .pulll_right a {
+      color: #FFD700;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .pulll_right a:hover {
+      background: rgba(255, 215, 0, 0.2);
+    }
+
+    .sebtn a.active {
+      background: rgba(255, 215, 0, 0.3);
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 主内容 -->
+  <div class="main-content" id="mainContent">
+
+  <div class="head">
+    <h1>丝绸之路·中国古代建筑大数据可视化</h1>
+    <div class="time" id="showTime">2019/11/29 0:12:42</div>
+  
+    <script>
+      var t = null;
+      t = setTimeout(time, 1000);
+      function time() {
+        clearTimeout(t);
+        dt = new Date();
+        var y = dt.getFullYear();
+        var mt = dt.getMonth() + 1;
+        var day = dt.getDate();
+        var h = dt.getHours();
+        var m = dt.getMinutes();
+        var s = dt.getSeconds();
+        document.getElementById("showTime").innerHTML = y + "/" + Appendzero(mt) + "/" + Appendzero(day) + " " + Appendzero(h) + ":" + Appendzero(m) + ":" + Appendzero(s);
+        function Appendzero(obj) { if (obj < 10) return "0" + obj; else return obj; }
+        t = setTimeout(time, 1000);
+      }
+    </script>
+  </div>
+
+  <div class="mainbox">
+    <ul class="clearfix">
+      <li>
+        <div class="boxall" style="height: calc(40% - .15rem); position:relative;">
+          <div class="alltitle">各朝代建筑数量排行</div>
+          <!-- 1. 跳转：朝代详情页 (dynasty.html) -->
+          <div class="jump-btn jump-btn-dynasty" onclick="location.href='dynasty.html'">查看详情 →</div>
+          <div class="sycm">
+            <ul class="clearfix">
+              <li>
+                <h2>1482</h2><span>唐代</span>
+              </li>
+              <li>
+                <h2>956</h2><span>汉代</span>
+              </li>
+              <li>
+                <h2>721</h2><span>宋代</span>
+              </li>
+              <li>
+                <h2>534</h2><span>明代</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="boxall" style="height: calc(60% - .15rem)">
+          <div class="alltitle">丝路四类建筑数量统计</div>
+          <div class="jump-btn jump-btn-list" onclick="location.href='./list.html'">查看详情 →</div>
+          <div class="sycm sycm2">
+            <ul class="clearfix">
+              
+              <li>
+                <h2>87</h2><span>皇宫</span>
+              </li>
+              <li>
+                <h2>432</h2><span>官府</span>
+              </li>
+              <li>
+                <h2>278</h2><span>桥梁</span>
+              </li>
+              <li>
+                <h2>1365</h2><span>民居</span>
+              </li>
+              <li>
+                <h2>42%</h2><span>保存完整</span>
+              </li>
+              <li>
+                <h2>2162</h2><span>总遗址数量</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <div style="position: relative">
+          <div class="barnav">
+            <div class="bar">
+              <div class="barbox">
+                <ul class="clearfix">
+                  <li class="pulll_left counter" style="cursor: pointer;" onclick="location.href='yizhi.html'">2162</li>
+                  <li class="pulll_left counter">146</li>
+                  <li class="pulll_left counter">28</li>
+                </ul>
+              </div>
+              <div class="barbox2">
+                <ul class="clearfix">
+                  <li class="pulll_left" style="cursor: pointer;" onclick="location.href='yizhi.html'">总建筑遗址</li>
+                  <li class="pulll_left">重点文保单位</li>
+                  <li class="pulll_left">覆盖省份</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mapbox" style="position:relative;">
+          <!-- 2. 跳转：建筑监测详情页 (building.html) -->
+          <div class="jump-btn jump-btn-building" onclick="location.href='../丝绸之路/丝绸之路 .html'">地图查看 →</div>
+          <div class="map">
+            <div class="map1"><img src="images/lbx.png" style="filter: brightness(0.9) sepia(0.2) hue-rotate(180deg) saturate(1.5);"></div>
+            <div class="map2"><img src="images/jt.png" style="filter: brightness(0.9) sepia(0.2) hue-rotate(180deg) saturate(1.5);"></div>
+            <div class="map3"><img src="images/map.png" style="filter: brightness(0.9) sepia(0.2) hue-rotate(180deg) saturate(1.5);"></div>
+            <div class="map4" id="map_1"></div>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <div class="boxall" style="height: calc(50% - .15rem); position:relative;">
+          <div class="alltitle">各省份建筑数量排行
+            <div class="pulll_right">
+              <a href="javascript:;"><span></span>完整</a>
+              <a href="javascript:;"><span></span>破损</a>
+             
+            </div>
+          </div>
+          <!-- 3. 跳转：省份详情页 (province.html) -->
+          <div class="jump-btn jump-btn-province" onclick="location.href='province.html'">查看详情 →</div>
+          <div class="boxnav" id="echart3"></div>
+        </div>
+
+        <div class="boxall" style="height: calc(50% - .15rem)">
+          <div class="alltitle">游客留言
+            <div class="pulll_right">
+              <a href="../发布/page/login/login.html" class="jump-btn" style="top: 0; right: 0;">发表留言</a>
+            </div>
+          </div>
+          <div class="wrap boxnav">
+            <ul>
+              <li>
+                <p><span class="comment">游客小明：玉门关遗址太震撼了，历史感十足！站在城墙上仿佛能感受到千年前的繁华与沧桑。</span></p>
+              </li>
+              <li>
+                <p><span class="comment">旅行者阿华：西安明城墙夜景太美，强烈推荐！灯光映照下的古城墙别有一番韵味。</span></p>
+              </li>
+              <li>
+                <p><span class="comment">摄影爱好者：莫高窟壁画艺术令人惊叹！古人的绘画技艺真是无与伦比。</span></p>
+              </li>
+              <li>
+                <p><span class="comment">历史迷小李：嘉峪关气势恢宏，不愧是天下第一雄关！感受到了古代将士的豪迈。</span></p>
+              </li>
+              <li>
+                <p><span class="comment">文化探索者：交河故城的布局很有特色，值得一看。千年古城的魅力令人沉醉。</span></p>
+              </li>
+              <li>
+                <p><span class="comment">丝路行者：高昌故城遗址保存得相当完好，值得细细品味历史的厚重感。</span></p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="mainbox2">
+    <ul class="clearfix">
+      <li>
+        <div class="boxall" style="height: 100%">
+          <div class="alltitle">建筑保存状态分布
+            <div class="pulll_right">
+              <div class="jump-btn jump-btn-save" onclick="location.href='protect.html'">查看详情 →</div>
+              <a href="javascript:;"><span></span>完整</a>
+              <a href="javascript:;"><span></span>待修复</a>
+            </div>
+          </div>
+          <div class="boxnav">
+            <ul class="btbox">
+              <li id="bt01"></li>
+              <li id="bt02"></li>
+              <li id="bt03"></li>
+              <li id="bt04"></li>
+            </ul>
+          </div>
+        </div>
+      </li>
+
+      <li>
+        <div class="boxall" style="height:100%; position:relative;">
+          <div class="alltitle">历年遗址发掘数量统计
+            <div class="pulll_right sebtn">
+              <a href="javascript:;" class="active">近十年</a>
+              <a href="javascript:;">近三十年</a>
+              <a href="javascript:;">全部</a>
+            </div>
+          </div>
+          <!-- 4. 跳转：历年遗址发掘统计详情页 (excavation.html) -->
+          <div class="jump-btn jump-btn-protect" onclick="location.href='excavation.html'">查看详情 →</div>
+          <div class="boxnav" id="echart4"></div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <script language="JavaScript" src="js/js.js"></script>
+  <script type="text/javascript" src="js/echarts.min.js"></script>
+  <script type="text/javascript" src="js/china.js"></script>
+  <script type="text/javascript" src="js/area_echarts.js"></script>
+  <script src="js/jquery.liMarquee.js"></script>
+
+  <script>
+    // ==================== 页面初始化 ====================
+    function initPage() {
+      $(function () {
+        $('.wrap,.adduser').liMarquee({ direction: 'up', runshort: false, scrollamount: 20 });
+        $('.counter').countUp();
+
+        var chart3 = echarts.init(document.getElementById('echart3'));
+        chart3.setOption({
+          tooltip: { trigger: 'axis' },
+          xAxis: { type: 'category', data: ['甘肃', '新疆', '陕西', '青海', '宁夏'] },
+          yAxis: { type: 'value' },
+          series: [{ 
+            data: [214, 187, 96, 53, 41], 
+            type: 'bar', 
+            itemStyle: { 
+              color: function(params) {
+                var colors = ['#3b82f6', '#10b981', '#f472b6', '#fb923c', '#8b5cf6'];
+                return colors[params.dataIndex];
+              }
+            } 
+          }]
+        });
+
+        var chart4 = echarts.init(document.getElementById('echart4'));
+        chart4.setOption({
+          tooltip: { trigger: 'axis' },
+          xAxis: { type: 'category', data: ['2015', '2017', '2019', '2021', '2023', '2025'] },
+          yAxis: { type: 'value' },
+          series: [{ data: [126, 145, 189, 203, 247, 286], type: 'line', smooth: true, itemStyle: { color: '#10b981' }, lineStyle: { color: '#10b981' } }]
+        });
+
+        var statusFull = {
+          tooltip: { trigger: 'item', formatter: '{b}：{d}%' },
+          series: [{
+            type: 'pie', radius: ['40%', '70%'],
+            label: { show: true, position: 'outside', fontSize: 11, formatter: '{b}: {d}%' },
+            data: [
+              { name: '完整完好', value: 46 },
+              { name: '轻微破损', value: 26 },
+              { name: '严重破损', value: 17 },
+              { name: '濒危待修', value: 11 }
+            ]
+          }],
+          color: ['#34d399', '#60a5fa', '#f472b6', '#fb923c']
+        };
+
+        echarts.init(document.getElementById('bt01')).setOption({
+          series: [{ type: 'pie', radius: ['40%', '70%'], data: [{ name: '完整完好', value: 46 }], color: ['#34d399'] }],
+          tooltip: { formatter: '{b}：{d}%' }
+        });
+        echarts.init(document.getElementById('bt02')).setOption({
+          series: [{ type: 'pie', radius: ['40%', '70%'], data: [{ name: '轻微破损', value: 26 }], color: ['#60a5fa'] }],
+          tooltip: { formatter: '{b}：{d}%' }
+        });
+        echarts.init(document.getElementById('bt03')).setOption({
+          series: [{ type: 'pie', radius: ['40%', '70%'], data: [{ name: '严重破损', value: 17 }], color: ['#f472b6'] }],
+          tooltip: { formatter: '{b}：{d}%' }
+        });
+        echarts.init(document.getElementById('bt04')).setOption({
+          series: [{ type: 'pie', radius: ['40%', '70%'], data: [{ name: '濒危待修', value: 11 }], color: ['#fb923c'] }],
+          tooltip: { formatter: '{b}：{d}%' }
+        });
+
+        window.addEventListener('resize', function () {
+          chart3.resize(); chart4.resize();
+          echarts.getInstanceByDom(bt01).resize();
+          echarts.getInstanceByDom(bt02).resize();
+          echarts.getInstanceByDom(bt03).resize();
+          echarts.getInstanceByDom(bt04).resize();
+        });
+      });
+    }
+
+    // 直接调用初始化函数
+    initPage();
+  </script>
+  </div>
+</body>
+
+</html>

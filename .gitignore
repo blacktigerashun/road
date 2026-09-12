@@ -1,0 +1,38 @@
+# ============ 密钥与环境变量（绝对不要提交） ============
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# ============ 依赖目录 ============
+**/node_modules/
+
+# ============ 构建产物 ============
+**/dist/
+**/dist-ssr/
+/chat/
+
+# ============ 日志 ============
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ============ 系统/编辑器文件 ============
+.DS_Store
+Thumbs.db
+.idea/
+**/.vscode/*
+!**/.vscode/extensions.json
+*.suo
+*.sw?
+
+# ============ 其他 ============
+*.tsbuildinfo
+.eslintcache
+coverage/
+*.local

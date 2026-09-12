@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>各朝代建筑统计详情</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="js/echarts.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      font-family: sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 15px;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../丝绸之路/img/背景2.png') no-repeat center/cover;
+      background-attachment: fixed;
+      z-index: -1;
+      filter: brightness(0.8);
+    }
+
+    /* 头部样式 */
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #FFD700;
+      margin-bottom: 12px;
+    }
+
+    .head h2 {
+      font-size: 24px;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+      background: linear-gradient(135deg, #FFD700, #FFB800, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .back {
+      color: #FFD700;
+      cursor: pointer;
+      font-size: 14px;
+      background: rgba(139, 69, 19, 0.7);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .back:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    /* 网格布局 - 2行3列 完全匹配参考图 */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 12px;
+      height: calc(100% - 80px);
+    }
+
+    /* 模块样式 - 古建筑风格 */
+    .box {
+      background: rgba(139, 69, 19, 0.8);
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    /* 标题样式 */
+    .title {
+      font-size: 15px;
+      color: #FFD700;
+      margin-bottom: 10px;
+      padding-left: 8px;
+      border-left: 3px solid #FFD700;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+    }
+
+    /* 图表容器 */
+    .chart {
+      height: calc(100% - 30px);
+      width: 100%;
+    }
+
+    /* 数据卡片 - 匹配参考图左上角信息栏 */
+    .info-card {
+      grid-column: 1/2;
+      grid-row: 1/2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: #FFE4B5;
+      width: 80px;
+    }
+
+    .info-value {
+      color: #FFD700;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="head">
+    <h2>各朝代建筑统计详情</h2>
+    <div class="back" onclick="location.href='index.html'">← 返回大屏</div>
+  </div>
+
+  <div class="grid">
+    <!-- 1. 基础信息卡片（匹配参考图左上角） -->
+    <div class="box info-card">
+      <div class="title">建筑基础统计</div>
+      <div class="info-item"><span class="info-label">唐代总数</span><span class="info-value">1482 处</span></div>
+      <div class="info-item"><span class="info-label">汉代总数</span><span class="info-value">956 处</span></div>
+      <div class="info-item"><span class="info-label">宋代总数</span><span class="info-value">721 处</span></div>
+      <div class="info-item"><span class="info-label">明代总数</span><span class="info-value">534 处</span></div>
+      <div class="info-item"><span class="info-label">整体完整率</span><span class="info-value">45.2%</span></div>
+    </div>
+
+    <!-- 2. 注意力分析样式的时间轴条形图 -->
+    <div class="box">
+      <div class="title">各朝代建筑存续时长</div>
+      <div class="chart" id="c1"></div>
+    </div>
+
+    <!-- 3. 情感分析样式的峰值图 -->
+    <div class="box">
+      <div class="title">各朝代文保等级分布</div>
+      <div class="chart" id="c2"></div>
+    </div>
+
+    <!-- 4. 资源发布样式的复合环形图 -->
+    <div class="box">
+      <div class="title">建筑类型占比分析</div>
+      <div class="chart" id="c3"></div>
+    </div>
+
+    <!-- 5. 移动位置样式的波动折线图 -->
+    <div class="box">
+      <div class="title">各朝代保存完整率趋势</div>
+      <div class="chart" id="c4"></div>
+    </div>
+
+    <!-- 6. 话语逻辑样式的多层环形图 -->
+    <div class="box">
+      <div class="title">修复优先级分布</div>
+      <div class="chart" id="c5"></div>
+    </div>
+  </div>
+
+  <script>
+    // 1. 时间轴条形图（匹配注意力分析样式）
+  echarts.init(document.getElementById('c1')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: {
+        left: '3%',
+        right: '25%',  // 缩小右边距 → 横轴立刻变短
+        top: '10%',
+        bottom: '10%',
+        containLabel: true  // 防止标签被切掉
+      },
+      xAxis: {
+        type: 'value',
+        name: '存续时长(百年)',
+        nameTextStyle: { color: '#FFE4B5' },
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisTick: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' },
+        
+      },
+      yAxis: {
+        type: 'category',
+        data: ['唐代', '汉代', '宋代', '明代'],
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisTick: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '存续时长',
+          type: 'bar',
+          barWidth: 15,
+          data: [28, 42, 35, 22],
+          itemStyle: { 
+            color: function(params) {
+              var colors = ['#3b82f6', '#10b981', '#f472b6', '#fb923c'];
+              return colors[params.dataIndex];
+            }
+          },
+          label: { show: true, position: 'right', color: '#FFE4B5' }
+        }
+      ]
+    });
+    // 2. 情感峰值图（匹配话语情感分析样式）
+    echarts.init(document.getElementById('c2')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '15%' },
+      xAxis: {
+        type: 'category', data: ['国家级', '省级', '市级', '县级'],
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      yAxis: {
+        type: 'value', name: '数量', nameTextStyle: { color: '#FFE4B5' },
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      series: [
+        { name: '唐代', type: 'bar', barWidth: 15, data: [64, 89, 126, 215], itemStyle: { color: '#3b82f6' } },
+        { name: '汉代', type: 'bar', barWidth: 15, data: [38, 65, 98, 189], itemStyle: { color: '#10b981' } },
+        { name: '宋代', type: 'bar', barWidth: 15, data: [29, 48, 76, 128], itemStyle: { color: '#f472b6' } }
+      ]
+    });
+
+    // 3. 复合环形图（匹配资源发布样式）
+    echarts.init(document.getElementById('c3')).setOption({
+      tooltip: { trigger: 'item' },
+      legend: {
+        orient: 'vertical', right: '5%', top: 'center',
+        textStyle: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '建筑类型', type: 'pie', radius: ['30%', '45%'],
+          center: ['30%', '50%'],
+          data: [
+            { value: 128, name: '皇宫' },
+            { value: 432, name: '官府' },
+            { value: 278, name: '桥梁' },
+            { value: 1365, name: '民居' }
+          ],
+          itemStyle: {
+            color: function (params) {
+              var colorList = ['#3b82f6', '#10b981', '#8b5cf6', '#ec4899'];
+              return colorList[params.dataIndex];
+            }
+          },
+          label: { show: true, position: 'inside', color: '#fff' }
+        },
+        {
+          name: '保存状态', type: 'pie', radius: ['55%', '70%'],
+          center: ['30%', '50%'],
+          data: [
+            { value: 46, name: '完整' },
+            { value: 28, name: '轻微破损' },
+            { value: 17, name: '严重破损' },
+            { value: 9, name: '濒危' }
+          ],
+          label: { show: true, position: 'inside', color: '#fff' }
+        }
+      ]
+    });
+
+    // 4. 波动折线图（匹配移动位置分布样式）
+    echarts.init(document.getElementById('c4')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '25%' },
+      xAxis: {
+        type: 'category', data: ['初建', '中期', '鼎盛', '衰落', '现存'],
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      yAxis: {
+        type: 'value', name: '完整率(%)', nameTextStyle: { color: '#FFE4B5' },
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '唐代', type: 'line', smooth: true,
+          data: [100, 95, 88, 65, 52],
+          lineStyle: { color: '#3b82f6', width: 3 },
+          itemStyle: { color: '#3b82f6' },
+          symbol: 'circle', symbolSize: 6
+        },
+        {
+          name: '汉代', type: 'line', smooth: true,
+          data: [100, 92, 85, 58, 48],
+          lineStyle: { color: '#10b981', width: 3 },
+          itemStyle: { color: '#10b981' },
+          symbol: 'circle', symbolSize: 6
+        }
+      ]
+    });
+
+    // 5. 多层环形图（匹配话语逻辑分析样式）
+    echarts.init(document.getElementById('c5')).setOption({
+      tooltip: { trigger: 'item' },
+      series: [
+        {
+          type: 'pie', radius: ['0%', '20%'],
+          center: ['50%', '50%'],
+          label: { show: false },
+          itemStyle: { color: '#8B4513' }
+        },
+        {
+          type: 'pie', radius: ['25%', '40%'],
+          center: ['50%', '50%'],
+          data: [
+            { value: 57, name: '高优先级', itemStyle: { color: '#ef4444' } },
+            { value: 20, name: '中优先级', itemStyle: { color: '#f97316' } },
+            { value: 15, name: '低优先级', itemStyle: { color: '#3b82f6' } },
+            { value: 5, name: '观察级', itemStyle: { color: '#8b5cf6' } },
+            { value: 2, name: '无需修复', itemStyle: { color: '#10b981' } },
+            { value: 1, name: '已修复', itemStyle: { color: '#06b6d4' } }
+          ],
+          label: {
+            show: true, position: 'outside',
+            formatter: '{b}: {c}%',
+            color: '#FFE4B5'
+          },
+          labelLine: { show: true, lineStyle: { color: '#FFD700' } }
+        },
+        {
+          type: 'pie', radius: ['45%', '60%'],
+          center: ['50%', '50%'],
+          label: { show: false },
+          itemStyle: { color: 'rgba(255,215,0,0.2)' }
+        }
+      ]
+    });
+  </script>
+</body>
+
+</html>

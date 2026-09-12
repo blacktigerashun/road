@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/index.css">
+    <title>未央宫遗址监测平台大数据</title>
+    <script src="js/jquery-2.2.1.min.js"></script>
+    <script src="js/rem.js"></script>
+    <script src="js/echarts.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/map/js/provincial/shaanxi.js"></script>
+    <script src="js/index.js"></script>
+
+
+</head>
+
+<body>
+    <div class="t_container">
+        <header class="t_header">
+            <span>未央宫遗址监测平台</span>
+            <button class="jump-btn" onclick="location.href='../../丝绸之路/未央宫分界面.html'">查看未央宫介绍</button>
+        </header>
+        <main class="t_main">
+            <div class="t_left_box">
+                <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                <div class="t_mbox t_rbox">
+                    <i></i>
+                    <span>年度接待游客</span>
+                    <h2>1860000</h2>
+                </div>
+                <div class="t_mbox t_gbox">
+                    <i></i>
+                    <span>遗址保护面积</span>
+                    <h2>4800亩</h2>
+                </div>
+                <div class="t_mbox t_ybox">
+                    <i></i>
+                    <span>核心宫殿遗址</span>
+                    <h2>14处</h2>
+                </div>
+                <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+            </div>
+            <div class="t_center_box">
+                <div class="t_top_box">
+                    <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                    <ul class="t_nav">
+                        <li>
+                            <span>总文物点位</span>
+                            <h1>326</h1>
+                            <i></i>
+                        </li>
+                        <li>
+                            <span>本年修复点位</span>
+                            <h1>42</h1>
+                            <i></i>
+                        </li>
+                        <li>
+                            <span>保护完好率</span>
+                            <h1>96%</h1>
+                        </li>
+                    </ul>
+                    <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                </div>
+                <div class="t_bottom_box">
+                    <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                    <div id="chart_3" class="echart" style="width: 100%; height: 3.6rem;"></div>
+                    <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                </div>
+            </div>
+            <div class="t_right_box">
+                <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                <div id="chart_4" class="echart" style="width: 50%; height: 4.6rem; position: absolute;"></div>
+                <header class="t_b_h">
+                    <span>实时监测点位</span>
+                    <img src="img/end.png"></img>
+                    <h3>28<span>个</span></h3>
+                </header>
+                <main class="t_b_m">
+                    <img src="img/map.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                    <div class="t_b_box">
+                        <span>地表温度</span>
+                        <i></i>
+                        <h2>22℃</h2>
+                    </div>
+                    <div class="t_b_box1">
+                        <span>环境湿度</span>
+                        <i></i>
+                        <h2>52RH</h2>
+                    </div>
+                    <div class="t_b_box2">
+                        <span>监测信号</span>
+                        <i></i>
+                        <h2>-75dBm</h2>
+                    </div>
+                    <div class="t_b_box3">
+                        <span>光照强度</span>
+                        <i></i>
+                        <h2>320LX</h2>
+                    </div>
+                </main>
+                <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+            </div>
+            <div class="b_left_box">
+                <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                <div id="chart_2" class="echart" style="width: 100%; height: 3.6rem;"></div>
+                <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+            </div>
+            <div class="b_center_box">
+                <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                <div id="chart_1" class="echart" style="width: 100%; height: 3.6rem;"></div>
+                <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+            </div>
+            <div class="b_right_box">
+                <img class="t_l_line" src="img/left_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+                <h1 class="t_title">遗址保护巡检记录</h1>
+                <table class="t_table">
+                    <thead>
+                        <tr>
+                            <th>巡检时间</th>
+                            <th>巡检人员</th>
+                            <th>联系电话</th>
+                            <th>巡检区域</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2025-12-20</td>
+                            <td>刘工</td>
+                            <td>13800138000</td>
+                            <td>前殿区域</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-20</td>
+                            <td>王工</td>
+                            <td>13900139000</td>
+                            <td>椒房殿区域</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-19</td>
+                            <td>张工</td>
+                            <td>13700137000</td>
+                            <td>石渠阁区域</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-19</td>
+                            <td>陈工</td>
+                            <td>13600136000</td>
+                            <td>天禄阁区域</td>
+                        </tr>
+                        <tr>
+                            <td>2025-12-18</td>
+                            <td>杨工</td>
+                            <td>13500135000</td>
+                            <td>城墙区域</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <img class="t_r_line" src="img/right_line.png" alt="更多资源：https://gitee.com/iGaoWei/big-data-view">
+            </div>
+        </main>
+    </div>
+</body>
+
+</html>

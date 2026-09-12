@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>丝绸之路古代建筑 - 清单列表</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="js/echarts.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 15px;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../丝绸之路/img/背景2.png') no-repeat center/cover;
+      background-attachment: fixed;
+      z-index: -1;
+      filter: brightness(0.8);
+    }
+
+    /* 头部样式 */
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #FFD700;
+      margin-bottom: 12px;
+    }
+
+    .head h2 {
+      font-size: 24px;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+      background: linear-gradient(135deg, #FFD700, #FFB800, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .back {
+      color: #FFD700;
+      cursor: pointer;
+      font-size: 14px;
+      background: rgba(139, 69, 19, 0.7);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .back:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    /* 模块样式 - 古建筑风格 */
+    .box {
+      background: rgba(139, 69, 19, 0.8);
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+      margin-bottom: 12px;
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    /* 标题样式 */
+    .title {
+      font-size: 15px;
+      color: #FFD700;
+      margin-bottom: 15px;
+      padding-left: 8px;
+      border-left: 3px solid #FFD700;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+    }
+
+    /* 筛选区样式 */
+    .filter-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    select, .search-box input {
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+      background-color: rgba(139, 69, 19, 0.5);
+      color: #FFD700;
+      font-size: 14px;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    select option {
+      background-color: #8B4513;
+      color: #FFD700;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .search-box input {
+      width: 200px;
+    }
+
+    .search-box button {
+      padding: 6px 12px;
+      background: rgba(139, 69, 19, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+      color: #FFD700;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: "STKaiti", "KaiTi", serif;
+      transition: all 0.3s ease;
+    }
+
+    .search-box button:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    /* 表格样式 */
+    .table-container {
+      max-height: calc(100% - 200px);
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+      font-size: 14px;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    th {
+      background-color: rgba(139, 69, 19, 0.5);
+      font-weight: bold;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      color: #FFD700;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+    }
+
+    td {
+      color: #FFE4B5;
+    }
+
+    /* 分页控制 */
+    .pagination {
+      text-align: center;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 215, 0, 0.1);
+    }
+
+    .pagination button {
+      background: rgba(139, 69, 19, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+      color: #FFD700;
+      padding: 6px 12px;
+      margin: 0 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-family: "STKaiti", "KaiTi", serif;
+      transition: all 0.3s ease;
+    }
+
+    .pagination button:hover, .pagination button.active {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+      border-color: #FFD700;
+    }
+
+    /* 按钮样式 */
+    .btn {
+      background: rgba(139, 69, 19, 0.7);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+      color: #FFD700;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: "STKaiti", "KaiTi", serif;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    /* 模态框样式 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(139, 69, 19, 0.8);
+    }
+
+    .modal-content {
+      background: rgba(139, 69, 19, 0.9);
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+    }
+
+    .modal-title {
+      color: #FFD700;
+      font-size: 18px;
+      font-weight: bold;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+    }
+
+    .close {
+      color: #FFD700;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover,
+    .close:focus {
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      margin-bottom: 15px;
+      line-height: 1.5;
+      color: #FFE4B5;
+    }
+
+    .modal-body strong {
+      color: #FFD700;
+    }
+
+    .modal-footer {
+      text-align: right;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 1200px) {
+      .filter-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      select,
+      .search-box {
+        width: 100%;
+      }
+
+      .search-box input {
+        flex: 1;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        min-width: 800px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="head">
+    <h2>丝绸之路古代建筑 - 清单列表</h2>
+    <div class="back" onclick="location.href='index.html'">← 返回大屏</div>
+  </div>
+
+  <div class="box">
+    <div class="title">建筑筛选</div>
+    <div class="filter-container">
+      <select id="selArea">
+        <option value="all">全部地区</option>
+        <option value="北京">北京</option>
+        <option value="陕西">陕西</option>
+        <option value="甘肃">甘肃</option>
+        <option value="新疆">新疆</option>
+        <option value="青海">青海</option>
+        <option value="宁夏">宁夏</option>
+        <option value="河北">河北</option>
+      </select>
+
+      <select id="selType">
+        <option value="all">全部类别</option>
+        <option value="皇宫">皇宫</option>
+        <option value="官府">官府</option>
+        <option value="桥梁">桥梁</option>
+        <option value="民居">民居</option>
+      </select>
+
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="输入名称/地区搜索" onkeydown="if(event.key===&#34;Enter&#34;)search()">
+        <button onclick="search()">搜索</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="box">
+    <div class="title">建筑清单</div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>建筑名称</th>
+            <th>建筑类别</th>
+            <th>所在地区</th>
+            <th>保护级别</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    
+    <div class="pagination" id="pagination">
+      <button class="btn" onclick="changePage(1)" id="page1">1</button>
+      <button class="btn" onclick="changePage(2)" id="page2">2</button>
+      <button class="btn" onclick="changePage(3)" id="page3">3</button>
+    </div>
+  </div>
+
+  <!-- 模态框 -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- 内容将通过JavaScript动态填充 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 完整建筑数据 - 丝绸之路上的中国古代建筑
+    const data = [
+      // 皇宫类
+      { id: 1, name: "故宫紫禁城", type: "皇宫", area: "北京", level: "世界文化遗产 / 国家级文保", description: "故宫紫禁城是中国明清两代的皇家宫殿，是世界上现存规模最大、保存最为完整的木质结构古建筑之一，也是世界文化遗产。它始建于明永乐四年（1406年），是中国古代宫廷建筑的精华。" },
+      { id: 2, name: "大明宫遗址", type: "皇宫", area: "陕西", level: "国家级考古遗址公园", description: "大明宫是唐代的皇宫，是当时世界上规模最大的宫殿建筑群之一。始建于贞观八年（634年），占地面积约3.2平方公里，是唐代政治中心和国家象征。" },
+      { id: 3, name: "兴庆宫", type: "皇宫", area: "陕西", level: "省级文物保护单位", description: "兴庆宫是唐玄宗时期的宫殿，是唐代三大宫殿之一。始建于开元二年（714年），原为唐玄宗即位前的藩邸，后扩建为宫苑，是唐代皇室的重要活动场所。" },
+      { id: 4, name: "阿房宫遗址", type: "皇宫", area: "陕西", level: "国家级文保单位", description: "阿房宫是秦代的宫殿建筑群，始建于秦始皇三十五年（前212年），是中国历史上规模宏大的宫殿之一，与长城、秦始皇陵并称为秦始皇的三大工程。" },
+      { id: 5, name: "未央宫遗址", type: "皇宫", area: "陕西", level: "国家级文保单位", description: "未央宫是西汉时期的皇宫，是中国历史上使用时间最长的宫殿建筑群之一。始建于汉高祖七年（前200年），是西汉的政治中心，也是丝绸之路的起点之一。" },
+      
+      // 官府类
+      { id: 6, name: "敦煌古县衙", type: "官府", area: "甘肃", level: "省级文物保护单位", description: "敦煌古县衙是古代敦煌地区的行政中心，是丝绸之路沿线重要的官府建筑。它见证了敦煌作为丝绸之路上重要节点的历史地位，反映了古代地方行政制度的特点。" },
+      { id: 7, name: "吐鲁番郡王府", type: "官府", area: "新疆", level: "自治区级文保单位", description: "吐鲁番郡王府是古代吐鲁番地区的行政中心，是新疆地区保存较为完整的古代官府建筑之一。它融合了中原与西域建筑风格，是多民族文化交流的见证。" },
+      { id: 8, name: "西海郡故城官署", type: "官府", area: "青海", level: "国家级文保单位", description: "西海郡故城官署是汉代西海郡的行政中心，是青海地区重要的古代官府建筑遗址。它见证了汉代中央政府对西部边疆的有效管辖，是丝绸之路青海道的重要节点。" },
+      { id: 9, name: "西夏王陵", type: "官府", area: "宁夏", level: "国家级文保单位", description: "西夏王陵是西夏王朝的皇家陵寝，是中国现存规模最大、地面遗迹保存最完整的帝王陵园之一。它融合了汉族、党项族和其他民族的建筑风格，是西夏文化的重要象征。" },
+      { id: 10, name: "榆林卫城", type: "官府", area: "陕西", level: "国家级文保单位", description: "榆林卫城是明代长城沿线的重要军事防御设施，是中国古代军事防御体系的重要组成部分。它见证了明代对北方边疆的防御策略，是丝绸之路北线的重要节点。" },
+      { id: 11, name: "嘉峪关关城", type: "官府", area: "甘肃", level: "世界文化遗产", description: "嘉峪关关城是明代长城的西端起点，是中国古代军事防御体系的重要组成部分。它是丝绸之路的重要关隘，有'天下第一雄关'的美誉，是世界文化遗产。" },
+      { id: 12, name: "阳关遗址", type: "官府", area: "甘肃", level: "国家级文保单位", description: "阳关是汉代设置的重要关隘，是丝绸之路南道的重要节点。它见证了古代中西文化交流的历史，是中国古代边防体系的重要组成部分。" },
+      { id: 13, name: "玉门关遗址", type: "官府", area: "甘肃", level: "世界文化遗产", description: "玉门关是汉代设置的重要关隘，是丝绸之路北道的重要节点。它见证了古代中西文化交流的历史，是中国古代边防体系的重要组成部分，也是世界文化遗产。" },
+      
+      // 桥梁类
+      { id: 14, name: "赵州桥", type: "桥梁", area: "河北", level: "世界文化遗产", description: "赵州桥是隋代工匠李春设计建造的石拱桥，是世界上现存最古老的石拱桥之一。它采用了敞肩拱结构，是中国古代桥梁建筑的杰出代表，也是世界文化遗产。" },
+      { id: 15, name: "兰州黄河铁桥", type: "桥梁", area: "甘肃", level: "国家级文保单位", description: "兰州黄河铁桥是中国第一座黄河铁桥，建于清光绪三十三年（1907年）。它是丝绸之路和黄河文化的重要象征，也是兰州的标志性建筑之一。" },
+      { id: 16, name: "西宁通济桥", type: "桥梁", area: "青海", level: "市级文保单位", description: "西宁通济桥是青海地区重要的古代桥梁，是丝绸之路青海道的重要交通设施。它见证了西宁作为青藏高原门户的历史地位，是古代桥梁建筑的重要实例。" },
+      { id: 17, name: "中卫古桥", type: "桥梁", area: "宁夏", level: "市级文保单位", description: "中卫古桥是宁夏地区重要的古代桥梁，是丝绸之路北线的重要交通设施。它见证了中卫作为黄河岸边重要城市的历史地位，是古代桥梁建筑的重要实例。" },
+      { id: 18, name: "灞桥遗址", type: "桥梁", area: "陕西", level: "省级文保单位", description: "灞桥是中国古代著名的桥梁之一，是丝绸之路起点的重要交通设施。它见证了西安作为古代都城的历史地位，是古代桥梁建筑的重要实例。" },
+      { id: 19, name: "咸阳古渡", type: "桥梁", area: "陕西", level: "省级文保单位", description: "咸阳古渡是中国古代著名的渡口之一，是丝绸之路起点的重要交通设施。它见证了咸阳作为古代都城的历史地位，是古代交通设施的重要实例。" },
+      
+      // 民居类
+      { id: 20, name: "喀什高台民居", type: "民居", area: "新疆", level: "世界文化遗产预备名录", description: "喀什高台民居是新疆喀什地区的传统民居建筑群，是中国唯一保存完整的生土建筑群。它融合了维吾尔族传统建筑风格和中原建筑元素，是多民族文化交流的见证，也是世界文化遗产预备名录项目。" },
+      { id: 21, name: "关中古民居", type: "民居", area: "陕西", level: "省级文保单位", description: "关中古民居是陕西关中地区的传统民居建筑群，以四合院为主要形式。它体现了关中地区的传统文化和生活方式，是中国北方民居的重要代表。" },
+      { id: 22, name: "武威古民居", type: "民居", area: "甘肃", level: "县级文保单位", description: "武威古民居是甘肃武威地区的传统民居建筑群，融合了中原和西北民族的建筑风格。它见证了武威作为丝绸之路上重要城市的历史地位，是古代民居建筑的重要实例。" },
+      { id: 23, name: "青海藏族民居", type: "民居", area: "青海", level: "省级文保单位", description: "青海藏族民居是青海地区藏族的传统民居建筑，以碉房为主要形式。它适应了青藏高原的自然环境，体现了藏族的传统文化和生活方式，是中国少数民族民居的重要代表。" },
+      { id: 24, name: "宁夏回族民居", type: "民居", area: "宁夏", level: "省级文保单位", description: "宁夏回族民居是宁夏地区回族的传统民居建筑，融合了汉族和回族的建筑风格。它体现了回族的传统文化和生活方式，是中国少数民族民居的重要代表。" },
+      { id: 25, name: "榆林四合院", type: "民居", area: "陕西", level: "市级文保单位", description: "榆林四合院是陕西榆林地区的传统民居建筑群，融合了中原和西北民族的建筑风格。它见证了榆林作为长城沿线重要城市的历史地位，是古代民居建筑的重要实例。" },
+      { id: 26, name: "天水古民居", type: "民居", area: "甘肃", level: "省级文保单位", description: "天水古民居是甘肃天水地区的传统民居建筑群，融合了中原和西北民族的建筑风格。它见证了天水作为丝绸之路上重要城市的历史地位，是古代民居建筑的重要实例。" },
+      { id: 27, name: "敦煌民居", type: "民居", area: "甘肃", level: "市级文保单位", description: "敦煌民居是甘肃敦煌地区的传统民居建筑，融合了中原和西北民族的建筑风格。它见证了敦煌作为丝绸之路上重要城市的历史地位，是古代民居建筑的重要实例。" }
+    ];
+
+    // 分页相关变量
+    let currentPage = 1;
+    const itemsPerPage = 10; // 每页显示10条数据
+
+    // 渲染表格
+    function render(list) {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+      if (list.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='6'>暂无匹配数据</td></tr>";
+        return;
+      }
+
+      // 计算分页数据
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const paginatedList = list.slice(startIndex, endIndex);
+
+      paginatedList.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.id}</td>
+          <td>${item.name}</td>
+          <td>${item.type}</td>
+          <td>${item.area}</td>
+          <td>${item.level}</td>
+          <td><button onclick="showDetails(${item.id})" class="btn">查看简介</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // 更新分页按钮状态
+      updatePaginationButtons(list.length);
+    }
+
+    // 更新分页按钮状态
+    function updatePaginationButtons(totalItems) {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      
+      // 显示或隐藏分页按钮
+      document.getElementById('page1').style.display = totalPages >= 1 ? 'inline-block' : 'none';
+      document.getElementById('page2').style.display = totalPages >= 2 ? 'inline-block' : 'none';
+      document.getElementById('page3').style.display = totalPages >= 3 ? 'inline-block' : 'none';
+      
+      // 更新按钮样式
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.getElementById(`page${i}`);
+        if (btn) {
+          if (i === currentPage) {
+            btn.classList.add('active');
+            btn.style.backgroundColor = 'rgba(255, 215, 0, 0.2)';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#FFD700';
+          } else {
+            btn.classList.remove('active');
+            btn.style.backgroundColor = 'rgba(139, 69, 19, 0.7)';
+            btn.style.color = '#FFD700';
+            btn.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+          }
+        }
+      }
+    }
+
+    // 切换分页
+    function changePage(page) {
+      currentPage = page;
+      search(); // 重新搜索并渲染当前页
+    }
+
+    // 搜索筛选核心函数
+    function search() {
+      const area = document.getElementById("selArea").value;
+      const type = document.getElementById("selType").value;
+      const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+
+      let result = [...data];
+
+      // 地区筛选
+      if (area !== "all") {
+        result = result.filter(i => i.area === area);
+      }
+
+      // 类别筛选
+      if (type !== "all") {
+        result = result.filter(i => i.type === type);
+      }
+
+      // 关键词搜索
+      if (keyword) {
+        result = result.filter(i =>
+          i.name.toLowerCase().includes(keyword) ||
+          i.area.toLowerCase().includes(keyword) ||
+          i.type.toLowerCase().includes(keyword)
+        );
+      }
+
+      render(result);
+    }
+
+    // 显示建筑详情
+    function showDetails(id) {
+      const building = data.find(item => item.id === id);
+      if (building) {
+        document.getElementById("modalTitle").textContent = building.name;
+        
+        // 未央宫遗址弹窗增加跳转按钮
+        const jumpButton = building.name === "未央宫遗址" 
+          ? '<button class="btn" style="margin-top: 10px; display: block; margin-left: auto; margin-right: auto; background: rgba(255, 215, 0, 0.2); border-color: #FFD700; color: #FFD700;" onclick="location.href=\'未央宫遗址/index.html\'">查看详细数据大屏</button>' 
+          : '';
+        
+        document.getElementById("modalBody").innerHTML = `
+          <p><strong>建筑类别：</strong>${building.type}</p>
+          <p><strong>所在地区：</strong>${building.area}</p>
+          <p><strong>保护级别：</strong>${building.level}</p>
+          <p><strong>简介：</strong>${building.description}</p>
+          ${jumpButton}
+        `;
+        document.getElementById("myModal").style.display = "block";
+      }
+    }
+
+    // 关闭模态框
+    function closeModal() {
+      document.getElementById("myModal").style.display = "none";
+    }
+
+    // 点击模态框外部关闭
+    window.onclick = function(event) {
+      const modal = document.getElementById("myModal");
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+
+    // 初始化
+    window.onload = function () {
+      render(data);
+      
+      // 添加筛选事件监听器
+      document.getElementById("selArea").addEventListener("change", search);
+      document.getElementById("selType").addEventListener("change", search);
+    }
+  </script>
+</body>
+
+</html>

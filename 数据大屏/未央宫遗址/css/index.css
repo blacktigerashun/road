@@ -1,0 +1,407 @@
+html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+html{
+    font-size: 100px;
+}
+ul,h1,h2,h3,h4,h5,h6,p{
+    list-style: 0;
+    padding: 0;
+    margin: 0;
+}
+a{
+    text-decoration: none;
+}
+
+/*正文*/
+.t_container{
+    width: 100%;
+    height: 100%;
+    min-width: 1360px;
+    background: url('../../丝绸之路/img/背景2.png') no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    min-height: 756px;
+}
+
+.t_container::before{
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(139, 69, 19, 0.7);
+    z-index: 0;
+}
+
+.t_header{
+    width: 100%;
+    height: 80px;
+    background: rgba(139, 69, 19, 0.9);
+    border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+    position: relative;
+    z-index: 1;
+}
+.t_header span{
+    color: #FFD700;
+    font-size: 0.36rem;
+    position: absolute;
+    top: 50%;
+    margin-top: -0.24rem;
+    left: 9%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.jump-btn{
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px 16px;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: 4px;
+    color: #FFD700;
+    font-size: 14px;
+    font-family: "STKaiti", "KaiTi", serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.jump-btn:hover{
+    background: rgba(255, 215, 0, 0.3);
+    color: #fff;
+}
+.t_main{
+    width: 98%;
+    height: 8.74rem;
+    margin: 0 auto;
+    margin-top: 0.2rem;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 1;
+}
+.t_left_box{
+    position: relative;
+    width: 3.36rem;
+    height: 4.6rem;
+    display: inline-block;
+    text-align: center;
+}
+.t_l_line{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+.t_r_line{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.t_center_box{
+    width: 6.82rem;
+    display: inline-block;
+    min-width: 490px;
+}
+.t_top_box{
+    width: 100%;
+    height: 1.13rem;
+    overflow: hidden;
+    position: relative;
+    margin-bottom: 0.2rem;
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.t_bottom_box{
+    width: 100%;
+    height: 3.17rem;
+    overflow: hidden;
+    position: relative;
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.t_right_box{
+    display: inline-block;
+    width: 7.8rem;
+    height: 4.6rem;
+    position: relative;
+    min-width: 560px;
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.b_left_box{
+    display: inline-block;
+    width: 5.9rem;
+    height: 3.6rem;
+    position: relative;
+    min-width: 425px;
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.b_center_box{
+    display: inline-block;
+    width: 6rem;
+    height: 3.6rem;
+    position: relative;
+    min-width: 432px;
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.b_right_box{
+    display: inline-block;
+    width: 6rem;
+    height: 3.6rem;
+    position: relative;
+    min-width: 432px;
+    background: rgba(139, 69, 19, 0.8);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.t_mbox{
+    width: 3rem;
+    height: 1.28rem;
+    position: relative;
+    margin: 0 auto;
+    margin-top: 0.2rem;
+    background: rgba(255, 215, 0, 0.15);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    border-radius: 8px;
+}
+.t_rbox{
+    background: rgba(255, 215, 0, 0.15);
+}   
+.t_gbox{
+    background: rgba(255, 215, 0, 0.15);
+}
+.t_ybox{
+    background: rgba(255, 215, 0, 0.15);
+}
+.t_mbox i{
+    display: inline-block;
+    width: 0.46rem;
+    height: 0.48rem;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 20%;
+    margin: auto;
+}
+.t_mbox h2{
+    font-size: 0.28rem;
+    color: #FFD700;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_mbox span{
+    font-size: 0.2rem;
+    color: #FFE4B5;
+    position: absolute;
+    top: 24%;
+    left: 48%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_rbox i{
+    background: url(../img/indent.png) no-repeat;
+    background-size: 100% 100%;
+}
+.t_gbox i{
+    background: url(../img/vip.png) no-repeat;
+    background-size: 100% 100%;
+}
+.t_ybox i{
+    background: url(../img/consumption.png) no-repeat;
+    background-size: 100% 100%;
+}
+.t_nav{
+    width: 100%;
+    height: 100%;
+}
+.t_nav li{
+    display: inline-block;
+    width: 30%;
+    height: 100%;
+    text-align: center;
+    position: relative;
+}
+.t_nav li span{
+    font-size: 0.16rem;
+    color: #FFD700;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 25%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_nav li h1{
+    font-size: 0.30rem;
+    color: #FFE4B5;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 50%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_nav li i{
+    width: 1px;
+    height: 100%;
+    position: absolute;
+    right: -0.2rem;
+    background: rgba(255, 215, 0, 0.3);
+}
+.t_table{
+    font-size: 0.16rem;
+    color: #FFE4B5;
+    width: 94%;
+    margin: 0 auto;
+    border-spacing: 0;
+    text-align: center;
+    box-sizing: border-box;
+    margin-top: 12%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_table tr{
+    margin: 0;
+    padding: 0;
+    height: 0.42rem;
+}
+.t_table thead tr{
+    background: rgba(255, 215, 0, 0.2);
+}
+.t_table tbody tr td:first-child{
+    border-left: 1px solid rgba(255, 215, 0, 0.3);
+}
+.t_table td{
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    border-right: 1px solid rgba(255, 215, 0, 0.3);
+}
+.t_table th{
+    color: #FFD700;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_title{
+    position: absolute;
+    font-size: 0.18rem;
+    color: #FFD700;
+    left: 5%;
+    top: 10%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_b_h,t_b_m{
+    position: absolute;
+    font-size: 0.16rem;
+    left: 54%;
+    width: 50%;
+    height: 4.6rem;
+}
+.t_b_h span{
+    position: absolute;
+    color: #FFE4B5;
+    top: 10%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_b_h img{
+    position: absolute;
+    width: 0.53rem;
+    height: 0.53rem;
+    top: 6%;
+    left: 24%
+}
+.t_b_h h3{
+    font-size: 0.36rem;
+    color: #FFD700;
+    position: absolute;
+    left: 55%;
+    top: 8%;
+    width: 1rem;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_b_h h3 span{
+    font-size: 0.2rem;
+    position: absolute;
+    left: 50%;
+    top: 28%;
+    color: #D2B48C;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_b_m img{
+    position: absolute;
+    left: 52%;
+    top: 22%;
+    border-top: 1px dotted rgba(255, 215, 0, 0.5);
+    padding: 0 0.18rem;
+    padding-top: 20px;
+    width: 3.19rem;
+    height: 1.67rem;
+}
+.t_b_box,.t_b_box1,.t_b_box2,.t_b_box3{
+    width: 1.3rem;
+    height: 0.56rem;
+    border: 1px dotted rgba(255, 215, 0, 0.5);
+    border-radius: 5px;
+    position: absolute;
+}
+.t_b_box{
+    top: 68%;
+    left: 56%;
+}
+.t_b_box span,.t_b_box1 span,.t_b_box2 span,.t_b_box3 span{
+    font-size: 0.14rem;
+    color: #FFE4B5;
+    position: absolute;
+    left: 10%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_b_box i,.t_b_box1 i,.t_b_box2 i,.t_b_box3 i{
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 50%;
+    left: 15%
+}
+.t_b_box i{
+    background: url('../img/t.png') no-repeat;
+    background-size: 100% 100%;
+}
+.t_b_box1 i{
+    background: url('../img/s.png') no-repeat;
+    background-size: 100% 100%;
+}
+.t_b_box2 i{
+    background: url('../img/j.png') no-repeat;
+    background-size: 100% 100%;
+}
+.t_b_box3 i{
+    background: url('../img/g.png') no-repeat;
+    background-size: 100% 100%;
+}
+.t_b_box h2,.t_b_box1 h2,.t_b_box2 h2,.t_b_box3 h2{
+    font-size: 0.18rem;
+    color: #FFE4B5;
+    position: absolute;
+    top: 30%;
+    left: 40%;
+    font-family: "STKaiti", "KaiTi", serif;
+}
+.t_b_box1{
+    top: 68%;
+    left: 78%;
+}
+.t_b_box2{
+    top: 84%;
+    left: 56%;
+}
+.t_b_box3{
+    top: 84%;
+    left: 78%;
+}

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>总建筑遗址详情</title>
+  <script src="js/echarts.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      font-family: sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      padding: 15px;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../丝绸之路/img/背景2.png') no-repeat center/cover;
+      background-attachment: fixed;
+      z-index: -1;
+      filter: brightness(0.8);
+    }
+
+    /* 头部样式 */
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #FFD700;
+      margin-bottom: 10px;
+      height: 40px;
+    }
+
+    .head h2 {
+      font-size: 18px;
+      margin: 0;
+      font-family: sans-serif;
+      background: linear-gradient(135deg, #FFD700, #FFB800, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .back {
+      color: #FFD700;
+      cursor: pointer;
+      font-size: 14px;
+      background: rgba(139, 69, 19, 0.7);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .back:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    /* 图片轮换区域 */
+    .rotation-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 250px;
+      margin-bottom: 12px;
+      background: rgba(139, 69, 19, 0.8);
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .rotation-section::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    /* 介绍文字区域 */
+    .description {
+      width: 25%;
+      padding: 12px;
+      background: rgba(139, 69, 19, 0.6);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      transition: all 0.5s ease;
+      overflow: hidden;
+    }
+
+    .description h3 {
+      color: #FFD700;
+      margin-bottom: 8px;
+      font-size: 14px;
+      border-left: 3px solid #FFD700;
+      padding-left: 8px;
+      font-family: sans-serif;
+    }
+
+    .description p {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #FFE4B5;
+      margin: 0;
+    }
+
+    /* 图片展示区域 */
+    .image-container {
+      width: 45%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      background: rgba(139, 69, 19, 0.6);
+      border: 1px solid rgba(255, 215, 0, 0.2);
+    }
+
+    .image-container img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+      transition: all 0.5s ease;
+      border-radius: 4px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+    }
+
+    /* 网格布局 - 2行3列 */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 12px;
+      height: auto;
+      min-height: 400px;
+    }
+
+    /* 模块样式 - 古建筑风格边框+背景 */
+    .box {
+      background: rgba(139, 69, 19, 0.8);
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    /* 标题样式 */
+    .title {
+      font-size: 15px;
+      color: #FFD700;
+      margin-bottom: 10px;
+      padding-left: 8px;
+      border-left: 3px solid #FFD700;
+      font-family: sans-serif;
+    }
+
+    /* 图表容器 */
+    .chart {
+      height: calc(100% - 30px);
+      width: 100%;
+    }
+
+    /* 数据卡片 */
+    .info-card {
+      grid-column: 1/2;
+      grid-row: 1/2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: #FFE4B5;
+      width: 100px;
+    }
+
+    .info-value {
+      color: #FFD700;
+      font-weight: 500;
+    }
+
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="head">
+    <h2>总建筑遗址详情</h2>
+    <div class="back" onclick="location.href='index.html'">← 返回大屏</div>
+  </div>
+
+  <!-- 图片轮换区域 -->
+  <div class="rotation-section">
+    <div class="description" id="leftDescription">
+      <h3>建筑特点</h3>
+      <p id="leftText">丝绸之路沿线的古代建筑融合了中原与西域的建筑风格，展现了不同文化的交流与融合。这些建筑不仅是历史的见证，也是人类文明的瑰宝。</p>
+    </div>
+    
+    <div class="image-container">
+      <img id="rotationImage" src="../丝绸之路/img/未央宫.png" alt="建筑图片">
+    </div>
+    
+    <div class="description" id="rightDescription">
+      <h3>历史意义</h3>
+      <p id="rightText">这些建筑见证了丝绸之路的繁荣与变迁，反映了古代中国与中亚、西亚等地区的文化交流。它们不仅是建筑艺术的杰作，也是研究古代社会、经济、文化的重要实物资料。</p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- 1. 基础信息卡片 -->
+    <div class="box info-card">
+      <div class="title">遗址概览</div>
+      <div class="info-item"><span class="info-label">总遗址数量</span><span class="info-value">2162 处</span></div>
+      <div class="info-item"><span class="info-label">重点文保单位</span><span class="info-value">146 处</span></div>
+      <div class="info-item"><span class="info-label">覆盖省份</span><span class="info-value">28 个</span></div>
+      <div class="info-item"><span class="info-label">保存完整率</span><span class="info-value">42.3%</span></div>
+      <div class="info-item"><span class="info-label">年均发掘数量</span><span class="info-value">119.6 处</span></div>
+    </div>
+
+    <!-- 2. 遗址类型分布 -->
+    <div class="box">
+      <div class="title">遗址类型分布</div>
+      <div class="chart" id="c1"></div>
+    </div>
+
+    <!-- 3. 遗址年代分布 -->
+    <div class="box">
+      <div class="title">遗址年代分布</div>
+      <div class="chart" id="c2"></div>
+    </div>
+
+    <!-- 4. 遗址保护级别分布 -->
+    <div class="box">
+      <div class="title">遗址保护级别分布</div>
+      <div class="chart" id="c3"></div>
+    </div>
+
+    <!-- 5. 遗址保存状态分布 -->
+    <div class="box">
+      <div class="title">遗址保存状态分布</div>
+      <div class="chart" id="c4"></div>
+    </div>
+
+    <!-- 6. 遗址地理分布 -->
+    <div class="box">
+      <div class="title">遗址地理分布</div>
+      <div class="chart" id="c5"></div>
+    </div>
+  </div>
+
+  <script>
+    // 图片轮换数据
+    const rotationData = [
+      {
+        image: '../丝绸之路/img/未央宫.png',
+        leftTitle: '皇宫建筑',
+        leftText: '皇宫建筑是丝绸之路沿线最重要的建筑类型之一，代表了古代中国的最高建筑水平。未央宫作为西汉的皇宫，是丝绸之路的起点之一，见证了汉代与西域的频繁交流。',
+        rightTitle: '历史价值',
+        rightText: '皇宫建筑不仅是权力的象征，也是文化交流的中心。未央宫的建筑风格影响了中亚地区的建筑设计，同时也吸收了西域的建筑元素，体现了文化的融合。'
+      },
+      {
+        image: '../丝绸之路/img/玉门关.png',
+        leftTitle: '官府建筑',
+        leftText: '官府建筑包括关隘、驿站等设施，是丝绸之路管理和保护的重要组成部分。玉门关作为汉代设置的重要关隘，是丝绸之路北道的重要节点，见证了古代中西文化交流的历史。',
+        rightTitle: '军事意义',
+        rightText: '官府建筑在丝绸之路的安全保障中发挥了重要作用。玉门关等关隘不仅是军事防御设施，也是商贸往来的检查站，确保了丝绸之路的畅通和安全。'
+      },
+      {
+        image: '../丝绸之路/img/渭源灞陵桥.png',
+        leftTitle: '桥梁建筑',
+        leftText: '桥梁建筑是丝绸之路交通的重要组成部分，解决了河流穿越的问题。渭源灞陵桥作为千年古桥，见证了丝绸之路的繁荣与变迁，是古代桥梁建筑的杰出代表。',
+        rightTitle: '技术创新',
+        rightText: '古代桥梁建筑展现了中国古代工匠的智慧和技术创新。灞陵桥等桥梁不仅解决了交通问题，也是建筑艺术的杰作，体现了古代中国在桥梁建设方面的卓越成就。'
+      },
+      {
+        image: '../丝绸之路/img/喀什承景芝民宿.png',
+        leftTitle: '民居建筑',
+        leftText: '民居建筑是丝绸之路沿线最常见的建筑类型，反映了当地的生活方式和文化特色。喀什高台民居作为新疆喀什地区的传统民居建筑群，是中国唯一保存完整的生土建筑群。',
+        rightTitle: '文化融合',
+        rightText: '民居建筑展现了不同民族文化的融合。喀什高台民居融合了维吾尔族传统建筑风格和中原建筑元素，是多民族文化交流的见证，体现了丝绸之路的文化多样性。'
+      }
+    ];
+
+    let currentIndex = 0;
+
+    // 图片轮换函数
+    function rotateImages() {
+      currentIndex = (currentIndex + 1) % rotationData.length;
+      const data = rotationData[currentIndex];
+      
+      // 更新图片
+      const image = document.getElementById('rotationImage');
+      image.src = data.image;
+      image.classList.remove('fade-in');
+      setTimeout(() => {
+        image.classList.add('fade-in');
+      }, 100);
+      
+      // 更新左侧描述
+      const leftDescription = document.getElementById('leftDescription');
+      leftDescription.querySelector('h3').textContent = data.leftTitle;
+      document.getElementById('leftText').textContent = data.leftText;
+      leftDescription.classList.remove('fade-in');
+      setTimeout(() => {
+        leftDescription.classList.add('fade-in');
+      }, 100);
+      
+      // 更新右侧描述
+      const rightDescription = document.getElementById('rightDescription');
+      rightDescription.querySelector('h3').textContent = data.rightTitle;
+      document.getElementById('rightText').textContent = data.rightText;
+      rightDescription.classList.remove('fade-in');
+      setTimeout(() => {
+        rightDescription.classList.add('fade-in');
+      }, 100);
+    }
+
+    // 每5秒轮换一次图片
+    setInterval(rotateImages, 5000);
+
+    // 1. 遗址类型分布
+    echarts.init(document.getElementById('c1')).setOption({
+      tooltip: { trigger: 'item' },
+      legend: {
+        orient: 'vertical', 
+        right: '5%', 
+        top: 'center',
+        textStyle: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '遗址类型', 
+          type: 'pie', 
+          radius: ['30%', '60%'],
+          center: ['40%', '50%'],
+          data: [
+            { value: 128, name: '皇宫' },
+            { value: 432, name: '官府' },
+            { value: 278, name: '桥梁' },
+            { value: 1365, name: '民居' }
+          ],
+          itemStyle: {
+            color: function (params) {
+              var colorList = ['#ef4444', '#f97316', '#3b82f6', '#10b981'];
+              return colorList[params.dataIndex];
+            }
+          },
+          label: { show: true, position: 'inside', color: '#fff' }
+        }
+      ]
+    });
+
+    // 2. 遗址年代分布
+    echarts.init(document.getElementById('c2')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '15%' },
+      xAxis: {
+        type: 'category', 
+        data: ['汉代', '唐代', '宋代', '明代', '清代', '其他'],
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      yAxis: {
+        type: 'value', 
+        name: '数量', 
+        nameTextStyle: { color: '#FFE4B5' },
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '遗址数量', 
+          type: 'bar', 
+          data: [956, 1482, 721, 534, 312, 157],
+          itemStyle: {
+            color: function (params) {
+              var colorList = ['#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316'];
+              return colorList[params.dataIndex];
+            }
+          }
+        }
+      ]
+    });
+
+    // 3. 遗址保护级别分布
+    echarts.init(document.getElementById('c3')).setOption({
+      tooltip: { trigger: 'item' },
+      legend: {
+        orient: 'vertical', 
+        right: '5%', 
+        top: 'center',
+        textStyle: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '保护级别', 
+          type: 'pie', 
+          radius: ['30%', '60%'],
+          center: ['40%', '50%'],
+          data: [
+            { value: 146, name: '国家级' },
+            { value: 328, name: '省级' },
+            { value: 576, name: '市级' },
+            { value: 1112, name: '县级' }
+          ],
+          itemStyle: {
+            color: function (params) {
+              var colorList = ['#ef4444', '#f97316', '#3b82f6', '#10b981'];
+              return colorList[params.dataIndex];
+            }
+          },
+          label: { show: true, position: 'inside', color: '#fff' }
+        }
+      ]
+    });
+
+    // 4. 遗址保存状态分布
+    echarts.init(document.getElementById('c4')).setOption({
+      tooltip: { trigger: 'item' },
+      legend: {
+        orient: 'vertical', 
+        right: '5%', 
+        top: 'center',
+        textStyle: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '保存状态', 
+          type: 'pie', 
+          radius: ['30%', '60%'],
+          center: ['40%', '50%'],
+          data: [
+            { value: 914, name: '完整完好' },
+            { value: 562, name: '轻微破损' },
+            { value: 368, name: '严重破损' },
+            { value: 318, name: '濒危待修' }
+          ],
+          itemStyle: {
+            color: function (params) {
+              var colorList = ['#ef4444', '#f97316', '#3b82f6', '#10b981'];
+              return colorList[params.dataIndex];
+            }
+          },
+          label: { show: true, position: 'inside', color: '#fff' }
+        }
+      ]
+    });
+
+    // 5. 遗址地理分布
+    echarts.init(document.getElementById('c5')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '15%' },
+      xAxis: {
+        type: 'category', 
+        data: ['甘肃', '新疆', '陕西', '青海', '宁夏', '河北', '河南', '山东'],
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5', rotate: 45 }
+      },
+      yAxis: {
+        type: 'value', 
+        name: '数量', 
+        nameTextStyle: { color: '#FFE4B5' },
+        axisLine: { lineStyle: { color: '#FFD700' } },
+        axisLabel: { color: '#FFE4B5' }
+      },
+      series: [
+        {
+          name: '遗址数量', 
+          type: 'bar', 
+          data: [214, 187, 96, 53, 41, 38, 32, 28],
+          itemStyle: {
+            color: function (params) {
+              var colorList = ['#3b82f6', '#10b981', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#ef4444', '#a855f7'];
+              return colorList[params.dataIndex];
+            }
+          }
+        }
+      ]
+    });
+  </script>
+</body>
+
+</html>

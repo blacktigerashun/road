@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>省份建筑分布详情</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <script src="js/echarts.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      font-family: sans-serif;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 15px;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('../丝绸之路/img/背景2.png') no-repeat center/cover;
+      background-attachment: fixed;
+      z-index: -1;
+      filter: brightness(0.8);
+    }
+
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #FFD700;
+      margin-bottom: 12px;
+    }
+
+    .head h2 {
+      font-size: 24px;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+      background: linear-gradient(135deg, #FFD700, #FFB800, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      text-shadow: 0 2px 10px rgba(255, 215, 0, 0.5);
+    }
+
+    .back {
+      color: #FFD700;
+      cursor: pointer;
+      font-size: 14px;
+      background: rgba(139, 69, 19, 0.7);
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .back:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 12px;
+      height: calc(100% - 80px);
+    }
+
+    .box {
+      background: rgba(139, 69, 19, 0.8);
+      border: 1px solid #FFD700;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+    }
+
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+      border-radius: 6px;
+      pointer-events: none;
+    }
+
+    .title {
+      font-size: 15px;
+      color: #FFD700;
+      margin-bottom: 10px;
+      padding-left: 8px;
+      border-left: 3px solid #FFD700;
+      font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+    }
+
+    .chart {
+      height: calc(100% - 30px);
+      width: 100%;
+    }
+
+    .info-card {
+      grid-column: 1/2;
+      grid-row: 1/2;
+      display: flex;
+      flex-direction: column;
+      justify-content: start;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: #FFE4B5;
+      width: 80px;
+    }
+
+    .info-value {
+      color: #FFD700;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="head">
+    <h2>各省份建筑分布详情</h2>
+    <div class="back" onclick="location.href='index.html'">← 返回大屏</div>
+  </div>
+
+  <div class="grid">
+    <!-- 1. 基础信息卡片 -->
+    <div class="box info-card">
+      <div class="title">省份建筑统计</div>
+      <div class="info-item"><span class="info-label">甘肃省</span><span class="info-value">214 处</span></div>
+      <div class="info-item"><span class="info-label">新疆区</span><span class="info-value">187 处</span></div>
+      <div class="info-item"><span class="info-label">陕西省</span><span class="info-value">96 处</span></div>
+      <div class="info-item"><span class="info-label">青海省</span><span class="info-value">53 处</span></div>
+      <div class="info-item"><span class="info-label">宁夏区</span><span class="info-value">41 处</span></div>
+    </div>
+
+    <!-- 2. 时间轴条形图 -->
+    <div class="box">
+      <div class="title">省份建筑保护投入</div>
+      <div class="chart" id="p1"></div>
+    </div>
+
+    <!-- 3. 情感峰值图 -->
+    <div class="box">
+      <div class="title">省份建筑健康度</div>
+      <div class="chart" id="p2"></div>
+    </div>
+
+    <!-- 4. 复合环形图 -->
+    <div class="box">
+      <div class="title">省份建筑类型分布</div>
+      <div class="chart" id="p3"></div>
+    </div>
+
+    <!-- 5. 波动折线图 -->
+    <div class="box">
+      <div class="title">近5年修复数量趋势</div>
+      <div class="chart" id="p4"></div>
+    </div>
+
+    <!-- 6. 多层环形图 -->
+    <div class="box">
+      <div class="title">文保等级占比</div>
+      <div class="chart" id="p5"></div>
+    </div>
+  </div>
+
+  <script>
+    // 1. 时间轴条形图
+    echarts.init(document.getElementById('p1')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '15%' },
+      xAxis: { type: 'value', name: '投入(万元)', nameTextStyle: { color: '#FFE4B5' }, axisLine: { lineStyle: { color: '#FFD700' } }, axisLabel: { color: '#FFE4B5' } },
+      yAxis: { type: 'category', data: ['甘肃', '新疆', '陕西', '青海', '宁夏'], axisLine: { lineStyle: { color: '#FFD700' } }, axisLabel: { color: '#FFE4B5' } },
+      series: [{ 
+        name: '年度投入', 
+        type: 'bar', 
+        barWidth: 20, 
+        data: [860, 750, 420, 280, 190], 
+        itemStyle: { 
+          color: function(params) {
+            var colors = ['#3b82f6', '#10b981', '#f472b6', '#fb923c', '#8b5cf6'];
+            return colors[params.dataIndex];
+          }
+        }, 
+        label: { show: true, position: 'right', color: '#FFE4B5' } 
+      }]
+    });
+
+    // 2. 情感峰值图
+    echarts.init(document.getElementById('p2')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '15%' },
+      xAxis: { type: 'category', data: ['健康', '良好', '一般', '较差', '濒危'], axisLine: { lineStyle: { color: '#FFD700' } }, axisLabel: { color: '#FFE4B5' } },
+      yAxis: { type: 'value', name: '数量', nameTextStyle: { color: '#FFE4B5' }, axisLine: { lineStyle: { color: '#FFD700' } }, axisLabel: { color: '#FFE4B5' } },
+      series: [
+        { name: '甘肃', type: 'bar', barWidth: 15, data: [86, 68, 42, 15, 3], itemStyle: { color: '#3b82f6' } },
+        { name: '新疆', type: 'bar', barWidth: 15, data: [75, 62, 38, 10, 2], itemStyle: { color: '#10b981' } },
+        { name: '陕西', type: 'bar', barWidth: 15, data: [42, 30, 18, 5, 1], itemStyle: { color: '#f472b6' } }
+      ]
+    });
+
+    // 3. 复合环形图
+    echarts.init(document.getElementById('p3')).setOption({
+      tooltip: { trigger: 'item' },
+      legend: { orient: 'vertical', right: '5%', top: 'center', textStyle: { color: '#FFE4B5' } },
+      series: [
+        {
+          name: '建筑类型', type: 'pie', radius: ['30%', '45%'], center: ['30%', '50%'],
+          data: [{ value: 128, name: '皇宫' }, { value: 432, name: '官府' }, { value: 278, name: '桥梁' }, { value: 1365, name: '民居' }],
+          itemStyle: { color: function (params) { var colorList = ['#3b82f6', '#10b981', '#8b5cf6', '#ec4899']; return colorList[params.dataIndex]; } },
+          label: { show: true, position: 'inside', color: '#fff' }
+        },
+        {
+          name: '省份分布', type: 'pie', radius: ['55%', '70%'], center: ['30%', '50%'],
+          data: [{ value: 42, name: '甘肃' }, { value: 37, name: '新疆' }, { value: 19, name: '陕西' }, { value: 10, name: '青海' }, { value: 8, name: '宁夏' }],
+          label: { show: true, position: 'inside', color: '#fff' }
+        }
+      ]
+    });
+
+    // 4. 波动折线图
+    echarts.init(document.getElementById('p4')).setOption({
+      tooltip: { trigger: 'axis' },
+      grid: { left: '10%', right: '5%', top: '15%', bottom: '25%' },
+      xAxis: { type: 'category', data: ['2020', '2021', '2022', '2023', '2024'], axisLine: { lineStyle: { color: '#FFD700' } }, axisLabel: { color: '#FFE4B5' } },
+      yAxis: { type: 'value', name: '修复数量', nameTextStyle: { color: '#FFE4B5' }, axisLine: { lineStyle: { color: '#FFD700' } }, axisLabel: { color: '#FFE4B5' } },
+      series: [
+        { name: '甘肃', type: 'line', smooth: true, data: [18, 25, 32, 41, 48], lineStyle: { color: '#3b82f6', width: 3 }, itemStyle: { color: '#3b82f6' }, symbol: 'circle', symbolSize: 6 },
+        { name: '新疆', type: 'line', smooth: true, data: [15, 22, 28, 35, 42], lineStyle: { color: '#10b981', width: 3 }, itemStyle: { color: '#10b981' }, symbol: 'circle', symbolSize: 6 }
+      ]
+    });
+
+    // 5. 多层环形图
+    echarts.init(document.getElementById('p5')).setOption({
+      tooltip: { trigger: 'item' },
+      series: [
+        { type: 'pie', radius: ['0%', '20%'], center: ['50%', '50%'], label: { show: false }, itemStyle: { color: '#8B4513' } },
+        {
+          type: 'pie', radius: ['25%', '40%'], center: ['50%', '50%'],
+          data: [
+            { value: 35, name: '国家级', itemStyle: { color: '#ef4444' } },
+            { value: 28, name: '省级', itemStyle: { color: '#f97316' } },
+            { value: 22, name: '市级', itemStyle: { color: '#3b82f6' } },
+            { value: 15, name: '县级', itemStyle: { color: '#10b981' } }
+          ],
+          label: { show: true, position: 'outside', formatter: '{b}: {c}%', color: '#FFE4B5' },
+          labelLine: { show: true, lineStyle: { color: '#FFD700' } }
+        },
+        { type: 'pie', radius: ['45%', '60%'], center: ['50%', '50%'], label: { show: false }, itemStyle: { color: 'rgba(255,215,0,0.2)' } }
+      ]
+    });
+  </script>
+</body>
+
+</html>
