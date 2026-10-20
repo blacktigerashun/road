@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>丝绸之路数据管理后台</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Microsoft YaHei", sans-serif; background: #1a1a2e; color: #f5e6c8; padding: 20px; }
+h1 { color: #c9a050; text-align: center; margin-bottom: 30px; font-size: 24px; }
+.card { background: rgba(201,160,80,0.1); border: 1px solid rgba(201,160,80,0.3); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+.card h2 { color: #c9a050; font-size: 18px; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(201,160,80,0.3); }
+.form-row { display: flex; gap: 15px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+.form-row label { width: 100px; color: #a08060; font-size: 14px; }
+.form-row input { flex: 1; min-width: 120px; padding: 6px 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(201,160,80,0.3); border-radius: 4px; color: #f5e6c8; font-size: 14px; }
+.form-row input:focus { outline: none; border-color: #c9a050; }
+.btn { padding: 8px 24px; background: #c9a050; color: #1a1a2e; border: none; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; }
+.btn:hover { background: #d4af37; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.updated { color: #6a9c6a; font-size: 12px; margin-left: 10px; }
+.toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #c9a050; color: #1a1a2e; padding: 10px 30px; border-radius: 4px; font-weight: bold; display: none; z-index: 999; }
+.back-link { text-align: center; margin-top: 20px; }
+.back-link a { color: #c9a050; text-decoration: none; font-size: 14px; }
+.back-link a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<script>
+// ==================== 登录守卫（纯前端演示，无后端验证） ====================
+// 未携带登录态则一律劝返登录页，防止直接直达后台
+if (sessionStorage.getItem('silkroad_admin_auth') !== '1') {
+    location.replace('login.html');
+}
+</script>
+<h1>丝绸之路数据管理后台</h1>
+<div id="container"></div>
+<div class="back-link"><a href="javascript:void(0)" onclick="logout()">退出登录</a> ｜ <a href="/">返回首页</a></div>
+<div class="toast" id="toast">保存成功</div>
+
+<script>
+async function loadSites() {
+    const res = await fetch('/api/sites');
+    const sites = await res.json();
+    const container = document.getElementById('container');
+    container.innerHTML = '';
+    sites.forEach(site => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <h2>${site.name} <span class="updated" id="updated-${site.id}">更新于 ${site.updated_at}</span></h2>
+            <div class="form-row">
+                <label>结构健康度(%)</label>
+                <input type="number" id="health-${site.id}" value="${site.health}" step="0.1" min="0" max="100">
+            </div>
+            <div class="form-row">
+                <label>温度(℃)</label>
+                <input type="number" id="temperature-${site.id}" value="${site.temperature}" step="0.1">
+            </div>
+            <div class="form-row">
+                <label>震动(g)</label>
+                <input type="number" id="shake-${site.id}" value="${site.shake}" step="0.01">
+            </div>
+            <div class="form-row">
+                <label>游客数据</label>
+                <input type="text" id="visitor-${site.id}" value='${JSON.stringify(site.visitor_data)}'>
+            </div>
+            <div class="form-row">
+                <button class="btn" onclick="saveSite('${site.id}')">保存</button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+async function saveSite(id) {
+    const data = {
+        health: parseFloat(document.getElementById(`health-${id}`).value),
+        temperature: parseFloat(document.getElementById(`temperature-${id}`).value),
+        shake: parseFloat(document.getElementById(`shake-${id}`).value),
+        visitor_data: JSON.parse(document.getElementById(`visitor-${id}`).value),
+    };
+    await fetch(`/api/sites/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+    const toast = document.getElementById('toast');
+    toast.style.display = 'block';
+    setTimeout(() => toast.style.display = 'none', 2000);
+    loadSites();
+}
+
+function logout() {
+    sessionStorage.removeItem('silkroad_admin_auth');
+    location.href = 'login.html';
+}
+
+loadSites();
+</script>
+</body>
+</html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>丝绸之路建筑论坛 - 管理员登录</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+
+    #bgVideo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .back-btn-top {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(139, 69, 19, 0.85);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: #FFD700;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "STKaiti", "KaiTi", serif;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .back-btn-top:hover {
+      background: rgba(255, 215, 0, 0.2);
+      color: #fff;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(139, 69, 19, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 50px 45px;
+      border-radius: 8px;
+      box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+      border: 2px solid rgba(255, 215, 0, 0.3);
+      position: relative;
+      z-index: 10;
+    }
+
+    .login-card:before, .login-card:after {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      content: "";
+      border-top: 2px solid #FFD700;
+      top: 0;
+    }
+
+    .login-card:before {
+      border-left: 2px solid #FFD700;
+      left: 0;
+    }
+
+    .login-card:after {
+      border-right: 2px solid #FFD700;
+      right: 0;
+    }
+
+    .login-card .card-footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      left: 0;
+    }
+
+    .login-card .card-footer:before, .login-card .card-footer:after {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      content: "";
+      border-bottom: 2px solid #FFD700;
+      bottom: 0;
+    }
+
+    .login-card .card-footer:before {
+      border-left: 2px solid #FFD700;
+      left: 0;
+    }
+
+    .login-card .card-footer:after {
+      border-right: 2px solid #FFD700;
+      right: 0;
+    }
+
+    .login-card h3 {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #FFD700;
+      margin-bottom: 12px;
+      font-family: "STKaiti", "KaiTi", serif;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      letter-spacing: 4px;
+    }
+
+    .login-card .sub-title {
+      text-align: center;
+      color: #D2B48C;
+      font-size: 14px;
+      margin-bottom: 30px;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    .form-label {
+      font-size: 15px;
+      color: #FFD700;
+      margin-bottom: 8px;
+      display: block;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 1rem 1.2rem;
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 4px;
+      font-size: 1.1rem;
+      outline: none;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    .form-control:focus {
+      border-color: #FFD700;
+      box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    }
+
+    .form-control::placeholder {
+      color: #999;
+    }
+
+    .pw-wrap {
+      position: relative;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #FFD700;
+      font-size: 13px;
+      user-select: none;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    .mb-3 {
+      margin-bottom: 22px;
+    }
+
+    .btn {
+      width: 100%;
+      background: rgba(255, 215, 0, 0.2);
+      border: 1px solid #FFD700;
+      color: #FFD700;
+      padding: 14px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: "STKaiti", "KaiTi", serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: rgba(255, 215, 0, 0.4);
+      color: #fff;
+    }
+
+    .alert {
+      position: fixed;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 14px 30px;
+      border-radius: 4px;
+      z-index: 9999;
+      display: none;
+      background: rgba(139, 69, 19, 0.95);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      color: #FFD700;
+      font-family: "STKaiti", "KaiTi", serif;
+      box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert.error {
+      border-color: #ff6b6b;
+      color: #ff9b9b;
+    }
+
+    .tips {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 13px;
+      color: #D2B48C;
+      font-family: "STKaiti", "KaiTi", serif;
+    }
+
+    .tips b {
+      color: #FFD700;
+    }
+
+    @media (max-width: 768px) {
+      .login-card {
+        width: 90%;
+        padding: 30px 25px;
+      }
+      .login-card h3 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <video id="bgVideo" autoplay loop muted>
+    <source src="./img/背景2.mp4" type="video/mp4">
+  </video>
+
+  <button class="back-btn-top" id="back-top">返回首页</button>
+
+  <div class="alert" id="msg"></div>
+
+  <div class="login-card">
+    <h3>论坛管理后台</h3>
+    <div class="sub-title">丝绸之路建筑论坛 · 管理员入口</div>
+
+    <div class="mb-3">
+      <label class="form-label">管理员账号</label>
+      <input class="form-control" id="account" placeholder="请输入管理员账号" autocomplete="username">
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">密码</label>
+      <div class="pw-wrap">
+        <input class="form-control" id="password" type="password" placeholder="请输入密码" autocomplete="current-password">
+        <span class="pw-toggle" id="pwToggle">显示</span>
+      </div>
+    </div>
+
+    <button class="btn" id="login">登 录</button>
+
+    <div class="tips">演示账号 <b>admin</b> ｜ 演示密码 <b>123456</b>（纯前端校验，无需后端）</div>
+
+    <div class="card-footer"></div>
+  </div>
+
+  <script>
+    // 纯前端管理员校验：账号密码为页面内常量比较，不经任何后端接口
+    var ADMIN_ACCOUNT = 'admin';
+    var ADMIN_PASS = '123456';
+    var REDIRECT = '../publish/index.html'; // 登录成功后进入发布界面
+
+    function showAlert(msg, isError) {
+      var el = document.getElementById('msg');
+      el.innerText = msg;
+      el.className = 'alert show' + (isError ? ' error' : '');
+      setTimeout(function () { el.className = 'alert'; }, 2200);
+    }
+
+    document.getElementById('back-top').onclick = function () {
+      location.href = '../../../数据大屏/index.html';
+    };
+
+    // 密码显隐切换
+    document.getElementById('pwToggle').onclick = function () {
+      var pwd = document.getElementById('password');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        this.innerText = '隐藏';
+      } else {
+        pwd.type = 'password';
+        this.innerText = '显示';
+      }
+    };
+
+    // 已登录则直接放行，避免重复登录
+    if (localStorage.getItem('forum_admin') === '1') {
+      location.replace(REDIRECT);
+    }
+
+    document.getElementById('login').onclick = function () {
+      var account = document.getElementById('account').value.trim();
+      var password = document.getElementById('password').value;
+
+      if (!account || !password) {
+        showAlert('请输入账号和密码', true);
+        return;
+      }
+
+      if (account === ADMIN_ACCOUNT && password === ADMIN_PASS) {
+        localStorage.setItem('forum_admin', '1');
+        localStorage.setItem('forum_admin_name', account);
+        showAlert('登录成功，正在进入发布后台...');
+        setTimeout(function () { location.href = REDIRECT; }, 900);
+      } else {
+        showAlert('账号或密码错误', true);
+        var card = document.querySelector('.login-card');
+        card.style.animation = 'none';
+        setTimeout(function () { card.style.animation = 'shake 0.4s'; }, 10);
+      }
+    };
+
+    // 回车提交
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') document.getElementById('login').click();
+    });
+  </script>
+  <style>
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+  </style>
+</body>
+
+</html>

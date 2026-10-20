@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>丝路数据管理 · 后台登录</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    min-height: 100vh;
+    color: #f5e6c8;
+    overflow: hidden;
+    position: relative;
+    background: #1a1a2e;
+}
+/* 与主站一致的丝路背景 */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('img/背景2.png') no-repeat center/cover;
+    background-attachment: fixed;
+    z-index: -2;
+}
+/* 深色遮罩，保证登录区可读 */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(26,26,46,0.88), rgba(26,26,46,0.72) 50%, rgba(60,30,10,0.85));
+    z-index: -1;
+}
+#bgCanvas { position: fixed; top: 0; left: 0; z-index: 0; pointer-events: none; }
+
+.login-wrap {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.login-card {
+    width: 400px;
+    max-width: 100%;
+    background: rgba(26,26,46,0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(201,160,80,0.45);
+    border-radius: 14px;
+    padding: 40px 36px 32px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 24px rgba(201,160,80,0.12);
+    animation: cardIn .6s ease;
+}
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.brand { text-align: center; margin-bottom: 24px; }
+.brand h1 {
+    font-size: 42px;
+    letter-spacing: 6px;
+    font-family: "STXingkai", "华文行楷", "方正行楷", "KaiTi", serif;
+    background: linear-gradient(135deg, #FFD700, #FFB800, #FFD700);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+}
+.brand p {
+    margin-top: 8px;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: #c9a050;
+    opacity: .85;
+}
+.divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 0 0 26px;
+    color: rgba(201,160,80,.6);
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+.divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,160,80,.5), transparent);
+}
+.field { margin-bottom: 18px; }
+.field label {
+    display: block;
+    font-size: 13px;
+    color: #a08060;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+.input-box { position: relative; }
+.field input {
+    width: 100%;
+    padding: 11px 14px;
+    background: rgba(0,0,0,0.38);
+    border: 1px solid rgba(201,160,80,0.35);
+    border-radius: 6px;
+    color: #f5e6c8;
+    font-size: 15px;
+    transition: .25s;
+}
+.field input::placeholder { color: rgba(245,230,200,0.35); }
+.field input:focus {
+    outline: none;
+    border-color: #c9a050;
+    box-shadow: 0 0 12px rgba(201,160,80,0.25);
+}
+.toggle-pwd {
+    position: absolute; right: 10px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    color: #a08060; font-size: 15px; padding: 4px;
+}
+.toggle-pwd:hover { color: #FFD700; }
+.err {
+    min-height: 20px;
+    font-size: 13px;
+    color: #e07070;
+    margin-bottom: 10px;
+    text-align: center;
+}
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #FFD700, #FFB800);
+    color: #1a1a2e;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 17px;
+    font-weight: bold;
+    letter-spacing: 6px;
+    transition: .25s;
+    font-family: "STXingkai", "华文行楷", "KaiTi", serif;
+}
+.btn-login:hover { filter: brightness(1.12); box-shadow: 0 4px 18px rgba(255,215,0,0.4); }
+.btn-login:active { transform: scale(.98); }
+.btn-login:disabled { opacity: .6; cursor: not-allowed; }
+.shake { animation: shake .4s; }
+@keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-8px); }
+    40%,80% { transform: translateX(8px); }
+}
+.tips {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(160,128,96,0.9);
+    letter-spacing: 1px;
+}
+.tips b { color: #c9a050; font-weight: normal; }
+.back-link { text-align: center; margin-top: 14px; }
+.back-link a { color: #c9a050; text-decoration: none; font-size: 13px; letter-spacing: 2px; }
+.back-link a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="login-wrap">
+    <div class="login-card" id="loginCard">
+        <div class="brand">
+            <h1>丝路数据管理</h1>
+            <p>SILK ROAD DATA CONSOLE</p>
+        </div>
+        <div class="divider">◆ 管 理 员 登 录 ◆</div>
+        <form id="loginForm" autocomplete="off">
+            <div class="field">
+                <label>账 号</label>
+                <div class="input-box">
+                    <input type="text" id="username" placeholder="请输入管理员账号" maxlength="32">
+                </div>
+            </div>
+            <div class="field">
+                <label>密 码</label>
+                <div class="input-box">
+                    <input type="password" id="password" placeholder="请输入登录密码" maxlength="64">
+                    <button type="button" class="toggle-pwd" id="togglePwd" title="显示/隐藏密码">👁</button>
+                </div>
+            </div>
+            <div class="err" id="errMsg"></div>
+            <button type="submit" class="btn-login" id="btnLogin">登 录</button>
+        </form>
+        <div class="tips">演示账号 <b>admin</b> ｜ 演示密码 <b>123456</b></div>
+        <div class="back-link"><a href="丝绸之路 .html">← 返回丝路首页</a></div>
+    </div>
+</div>
+
+<script>
+// ==================== 登录态守卫 ====================
+// 已登录则直接进入后台，无需重复登录
+if (sessionStorage.getItem('silkroad_admin_auth') === '1') {
+    location.replace('admin.html');
+}
+
+// ==================== 演示凭据（纯前端，无后端验证） ====================
+var DEMO_USER = 'admin';
+var DEMO_PASS = '123456';
+
+var form = document.getElementById('loginForm');
+var userInput = document.getElementById('username');
+var passInput = document.getElementById('password');
+var errMsg = document.getElementById('errMsg');
+var btnLogin = document.getElementById('btnLogin');
+var loginCard = document.getElementById('loginCard');
+
+// 密码显示 / 隐藏
+document.getElementById('togglePwd').addEventListener('click', function () {
+    passInput.type = passInput.type === 'password' ? 'text' : 'password';
+});
+
+// 输入时清除错误提示
+[userInput, passInput].forEach(function (el) {
+    el.addEventListener('input', function () { errMsg.textContent = ''; });
+});
+
+form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var u = userInput.value.trim();
+    var p = passInput.value;
+
+    if (!u || !p) {
+        showError('账号与密码不能为空');
+        return;
+    }
+    if (u !== DEMO_USER || p !== DEMO_PASS) {
+        showError('账号或密码不正确，请重新输入');
+        return;
+    }
+
+    // 前端验证通过：写入登录态并进入后台
+    btnLogin.disabled = true;
+    btnLogin.textContent = '登录中…';
+    sessionStorage.setItem('silkroad_admin_auth', '1');
+    setTimeout(function () { location.href = 'admin.html'; }, 400);
+});
+
+function showError(text) {
+    errMsg.textContent = text;
+    loginCard.classList.remove('shake');
+    void loginCard.offsetWidth; // 重新触发抖动动画
+    loginCard.classList.add('shake');
+}
+
+// ==================== 金色粒子背景（与主站同风格） ====================
+(function () {
+    var canvas = document.getElementById('bgCanvas');
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var PARTICLE_COUNT = 60;
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    for (var i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: 1.5 + Math.random() * 3.5,
+            speed: 0.2 + Math.random() * 0.5,
+            drift: Math.random() * Math.PI * 2
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            p.y -= p.speed;
+            p.x += Math.sin(p.drift) * 0.3;
+            p.drift += 0.01;
+            if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+            if (p.x > canvas.width + 10) p.x = -10;
+            if (p.x < -10) p.x = canvas.width + 10;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,215,0,0.55)';
+            ctx.fill();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+})();
+</script>
+</body>
+</html>
